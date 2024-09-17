@@ -61,7 +61,7 @@ ingress:
             number: 80
   tls:
    - secretName: wordpress-demo-tls
-    hosts:
+     hosts:
       - wordpress-demo.nasi181.com
 
 resources: {}
