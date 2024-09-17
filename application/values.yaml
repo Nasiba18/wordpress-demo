@@ -5,10 +5,10 @@
 replicaCount: 3
 
 image:
-  repository: nginx
+  repository: wordpress
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: "latest"
 
 imagePullSecrets: []
 nameOverride: ""
@@ -41,20 +41,28 @@ service:
   port: 80
 
 ingress:
-  enabled: false
-  className: ""
-  annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
+  enabled: true
+  className: "wordpress"
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "0"
+    ingress.kubernetes.io/ssl-redirect: "false"
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    acme.cert-manager.io/http01-edit-in-place: "true"
+
   hosts:
-    - host: chart-example.local
+    - host: wordpress-demo.nasi181.com
       paths:
         - path: /
           pathType: ImplementationSpecific
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+          backend:
+           service:
+           name: wordpress # Replace with the actual service name for WordPress
+           port:
+            number: 80
+  tls:
+   - secretName: wordpress-demo-tls
+    hosts:
+      - wordpress-demo.nasi181.com
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
